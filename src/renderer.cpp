@@ -234,8 +234,8 @@ bool CRenderer::setupScene(const CVisualConfig& cfg) {
 	equipVS(SLOTTYPE::CHEST_SLOT, _Config.vpa.PropertySubData.JacketModel, _Config.vpa.PropertySubData.JacketColor);
 	equipVS(SLOTTYPE::ARMS_SLOT, _Config.vpa.PropertySubData.ArmModel, _Config.vpa.PropertySubData.ArmColor);
 	equipVS(SLOTTYPE::HANDS_SLOT, _Config.vpb.PropertySubData.HandsModel, _Config.vpb.PropertySubData.HandsColor);
-	equipVS(SLOTTYPE::FEET_SLOT, _Config.vpb.PropertySubData.FeetModel, _Config.vpb.PropertySubData.FeetColor);
 	equipVS(SLOTTYPE::LEGS_SLOT, _Config.vpa.PropertySubData.TrouserModel, _Config.vpa.PropertySubData.TrouserColor);
+	equipVS(SLOTTYPE::FEET_SLOT, _Config.vpb.PropertySubData.FeetModel, _Config.vpb.PropertySubData.FeetColor);
 
 	if (!_Config.FaceShot && _Config.vpa.PropertySubData.WeaponRightHand > 0) {
 		equipVS(SLOTTYPE::RIGHT_HAND_SLOT, _Config.vpa.PropertySubData.WeaponRightHand);
@@ -543,13 +543,54 @@ void CRenderer::equipVS(const SLOTTYPE::EVisualSlot slot, const uint index, cons
 	_Sheets[slot] = SheetMngr.getItem(slot, index);
 
 	if (_Sheets[slot]) {
+		std::string shapeName;
 		const CItemSheet *item = _Sheets[slot];
-		nldebug(">> equip: (%d,%d) - %s / %s", slot, index, item->getShape().c_str(), item->getShapeFemale().c_str());
 		if (_Config.vpa.PropertySubData.Sex == GSGENDER::female) {
-			equipShape(slot, item->getShapeFemale(), item);
+			shapeName = item->getShapeFemale();
 		} else {
-			equipShape(slot, item->getShape(), item);
+			shapeName = item->getShape();
 		}
+		// override boots shape if caster pants are equipped
+		bool isBoots = (item->ItemType == ITEM_TYPE::LIGHT_BOOTS ||	item->ItemType == ITEM_TYPE::MEDIUM_BOOTS || item->ItemType == ITEM_TYPE::HEAVY_BOOTS);
+		if (slot == SLOTTYPE::FEET_SLOT && isBoots) {
+			// Check for caster pants: fy_hom_caster01_pantabottes.shape
+			if (_ListInstance[SLOTTYPE::LEGS_SLOT].getShapeName().find("_caster01_") != std::string::npos)
+			{
+				std::string tmpName(toLower(shapeName));
+				std::string::size_type pos = tmpName.find("_bottes");
+				if (pos != std::string::npos){
+					// tr_hof_underwear_bottes.shape -> tr_hof_caster01_bottes_underwear
+					// tr_hof_civil01_bottes.shape   -> tr_hof_caster01_bottes_civil01
+					// tr_hof_armor00_bottes.shape   -> tr_hof_caster01_bottes_armor00
+					// tr_hof_armor01_bottes.shape   -> tr_hof_caster01_bottes_armor01
+					std::string type = tmpName.substr(7, pos-7);
+					tmpName.replace(pos+7, 0, "_" + type);
+					tmpName.replace(7, type.length(), "caster01");
+					if (CPath::exists(tmpName)){
+						shapeName = tmpName;
+					} else {
+						// see if non-standard fyros armor
+						if (tmpName[0] == 'f') {
+							if (tmpName[5] == 'f') {
+								tmpName = "fy_hof_caster01_bottes_civil.shape";
+							} else {
+								tmpName = "fy_hom_caster01_civil01_bottes.shape";
+							}
+							printf(" (%s)\n", tmpName.c_str());
+							if (CPath::exists(tmpName)) {
+								shapeName = tmpName;
+							} else {
+								nlwarning("caster boots not found (%s)", tmpName.c_str());
+							}
+						} else {
+							nlwarning("caster boots not found (%s)", tmpName.c_str());
+						}
+					}
+				}
+			}
+		}
+		nldebug(">> equip: (%d,%d) - %s", slot, index, shapeName.c_str());
+		equipShape(slot, shapeName, item);
 	}
 
 	if (_ListInstance[slot].empty()) {
