@@ -1,46 +1,44 @@
 Ryzom Rendering Service
 =========================
 
-
-
 Compiling
 ---------
 
-This is meant to be compiled as sub-project.
+`docker-compose -f docker-compose-dev.yml build` will create container to compile rrs-server.
 
-Include 'ADD_SUBDIRECTORY(rrs-server)' to 'code/CMakeLists.txt' file and copy these sources there or use symlink.
+`docker-compose -f docker-compose-dev.yml run rrsdev` will clone, build, and copies rrs-server to app.
 
-cmake option WITH_BMSITE_RRS=ON must be enabled.
+`rrsdev` container uses current folder as `/rrs` volume
 
-Example
+Requirements
+------------
 
-	cmake <ryzom-sources-path>/code \
-		-DCMAKE_BUILD_TYPE=Release -DWITH_BMSITE_RRS=ON \
-		-DWITH_STATIC=ON -DWITH_STATIC_DRIVERS=ON \
-		-DWITH_RYZOM_TOOLS=OFF -DWITH_RYZOM_SERVER=OFF -DWITH_RYZOM_CLIENT=OFF \
-		-DWITH_NEL_TOOLS=OFF -DWITH_NEL_SAMPLES=OFF -DWITH_NEL_TESTS=OFF \
-		-DWITH_LOGIC=OFF -DWITH_PACS=OFF -DWITH_SOUND=OFF -DWITH_GUI=OFF
+These files needs to be copied under `app/data`
 
-Compiling in clean virtual machine (ubuntu 12.04 precise) requires packages
+from `$HOME/.local/share/Ryzom/ryzom_live/data`
+	characters_*.bnp
+	construction.bnp
+	data_common.bnp
+	fauna_*.bnp
+	leveldesign.bnp
+	objects.bnp
+	sfx.bnp
 
-	build-essential cmake mercurial libxml2-dev libfreetype6-dev
-	libpng12-0-dev libgl1-mesa-swx11-dev
-
-And sources from [RyzomCore](https://bitbucket.org/ryzom/ryzomcore)
+and from `$HOME/.local/share/Ryzom/ryzom_live/unpack`
+	packedsheets.bnp
 
 Running
 -------
 
-Running in virtual machine (ubuntu 12.04 precise) requires packages
+`docker-compose build` builds container for rrs-server to run in.
 
-	vnc4server libgl1-mesa-swx11 libxml2 libfreetype6 libpng12-0
+`docker-compose up -d` will start the container.
 
-If there is a need for window manager, then `blackbox` is nice and small.
+`rrs` container uses `app` folder as `/rrs` volume.
 
-Start vnc server normally ('vncserver' from command line). You can then modify
-$HOME/.vnc/xstartup script to run 'rrs-server.sh'.
+Copy `docker-compose.override.sample.yml` to `docker-compose.override.yml` and change IP/ports as needed.
 
-Example scripts to download .bnp files and run service are in 'bin' directory
+Its now possible to open vnc connection to `127.0.0.1::25001` (vnc port on host is 25001).
 
 Using
 -----

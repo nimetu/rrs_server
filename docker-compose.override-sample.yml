@@ -1,0 +1,14 @@
+version: '3.4'
+
+networks:
+  default:
+
+services:
+  rrs:
+    ports:
+      - '127.0.0.1:25000:25000'
+      - '127.0.0.1:25001:5901'
+    environment:
+      - VNC_RESOLUTION=1024x768
+      - VNC_PW=rrsvncpass
+

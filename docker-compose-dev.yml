@@ -1,0 +1,10 @@
+version: '3.4'
+
+services:
+  rrsdev:
+    image: rrsdev:latest
+    build:
+      context: ./rrsdev/
+    volumes:
+      - .:/rrs
+

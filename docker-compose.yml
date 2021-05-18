@@ -1,0 +1,21 @@
+version: '3.4'
+
+networks:
+  default:
+
+services:
+  rrs:
+    image: rrs:latest
+    build:
+      context: ./docker/
+    restart: on-failure
+    networks:
+      default:
+        aliases:
+          - rrs.local
+    environment:
+      - VNC_RESOLUTION=1024x768
+      - VNC_PW=rrsvncpass
+    volumes:
+      - ./app:/rrs
+

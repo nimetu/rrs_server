@@ -1,0 +1,12 @@
+
+#pkill vncconfig
+
+xsetroot -solid "#101010"
+
+( cd /rrs && xterm -geometry 119x45-0+0 -e './rrs-service.sh ; bash'; ) &
+
+while true; do
+	x-window-manager
+	sleep 1
+done
+

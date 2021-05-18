@@ -10,11 +10,11 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 
 RRS_PID=
-LOCKFILE=$(mktemp $DIR/.service-XXXXXX)
+LOCKFILE=$DIR/.service-running
 
 # remove lockfile, kill running process
 cleanup(){
-	rm ${LOCKFILE}
+	[ -f $LOCKFILE ] && rm $LOCKFILE
 	[ ! -z $RRS_PID ] && kill $RRS_PID
 
 	exit
@@ -34,7 +34,9 @@ running(){
 	return $( ps -p $RRS_PID &> /dev/null )
 }
 
-trap "cleanup" SIGINT SIGTERM
+trap cleanup EXIT
+
+touch $LOCKFILE
 
 # restart renderer as long as LOCKFILE exists
 while lockfile; do
@@ -44,16 +46,19 @@ while lockfile; do
 	fi
 
 	# launch renderer
-	./render_service ${OPTS} &> /dev/null &
-
-	# write process ID to LOCKFILE
+	./render_service $OPTS &> /dev/null &
 	RRS_PID=$!
-	echo ${RRS_PID} > $LOCKFILE
+
+	# log output to terminal
+	tail -F render_service.log &
+	LOG_PID=$!
 
 	# wait until lockfile or process disappears
 	while lockfile && running; do
 		sleep 2s
 	done
+
+	kill $LOG_PID
 
 	# lockfile is missing, terminate process
 	if running; then
