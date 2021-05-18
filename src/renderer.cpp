@@ -136,40 +136,40 @@ bool CRenderer::idle() {
 
 		if (Driver->AsyncListener.isKeyDown(KeyD)) {
 			if (_Skeleton.empty()) {
-				nlinfo("_Skeleton: empty");
+				nldebug("_Skeleton: empty");
 			} else {
-				nlinfo("_Skeleton: {%s}", _Skeleton.getShapeName().c_str());
-				nlinfo(">> scale : {%s}", _Skeleton.getScale().asString().c_str());
+				nldebug("_Skeleton: {%s}", _Skeleton.getShapeName().c_str());
+				nldebug(">> scale : {%s}", _Skeleton.getScale().asString().c_str());
 			}
-			nlinfo("_ListInstance:");
+			nldebug("_ListInstance:");
 			for (uint i = 0; i < _ListInstance.size(); i++) {
 				if (_ListInstance[i].empty()) {
-					nlinfo("%d: empty", i);
+					nldebug("%d: empty", i);
 				} else {
-					nlinfo("%d: {%s}, {%s}", i, _ListInstance[i].getScale().asString().c_str(), _ListInstance[i].getShapeName().c_str());
+					nldebug("%d: {%s}, {%s}", i, _ListInstance[i].getScale().asString().c_str(), _ListInstance[i].getShapeName().c_str());
 				}
 			}
-			nlinfo("_Sheets:");
+			nldebug("_Sheets:");
 			for (uint i = 0; i < _Sheets.size(); i++) {
 				if (_Sheets[i]) {
-					nlinfo("%d: {%d}, {%s}, {%s}", i, _Sheets[i]->Family, _Sheets[i]->getAnimSet().c_str(), _Sheets[i]->getShape().c_str());
+					nldebug("%d: {%d}, {%s}, {%s}", i, _Sheets[i]->Family, _Sheets[i]->getAnimSet().c_str(), _Sheets[i]->getShape().c_str());
 				} else {
-					nlinfo("%d: empty", i);
+					nldebug("%d: empty", i);
 				}
 			}
-			nlinfo("_FX:");
+			nldebug("_FX:");
 			for (uint i = 0; i < _FX.size(); i++) {
 				if (_FX[i].empty()) {
-					nlinfo("%d: empty", i);
+					nldebug("%d: empty", i);
 				} else {
-					nlinfo("%d: {%s}", i, _FX[i].getShapeName().c_str());
+					nldebug("%d: {%s}", i, _FX[i].getShapeName().c_str());
 				}
 			}
 
-			nlinfo("_StaticFX:");
+			nldebug("_StaticFX:");
 			for (TStaticFXs::iterator it = _StaticFXs.begin(); it != _StaticFXs.end(); ++it) {
 				if (!it->empty()) {
-					nlinfo("  : {%s}", it->getShapeName().c_str());
+					nldebug("  : {%s}", it->getShapeName().c_str());
 				}
 			}
 		}

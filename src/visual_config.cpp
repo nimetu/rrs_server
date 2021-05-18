@@ -11,7 +11,7 @@
 #include "stdpch.h"
 #include "visual_config.h"
 
-void CVisualConfig::serial(NLMISC::IStream & f) throw (NLMISC::EStream) {
+void CVisualConfig::serial(NLMISC::IStream & f) {
 	if (!f.isReading()) {
 		throw "This is only for reading";
 	}
@@ -42,7 +42,6 @@ void CVisualConfig::serial(NLMISC::IStream & f) throw (NLMISC::EStream) {
 		vpa.serial(f);
 		vpb.serial(f);
 		vpc.serial(f);
-		nlinfo("1");
 	} else {
 		nldebug(">> long packet");
 		// they say bitfields are compiler and platform specific - this is mainly for php
@@ -129,17 +128,12 @@ void CVisualConfig::serial(NLMISC::IStream & f) throw (NLMISC::EStream) {
 		angle += 360;
 	}
 	Theta = angle * 3.14 / 180;
-	nlinfo("2");
 	f.serial(angle);
 	Phi = angle * 3.14 / 180;
-	nlinfo("3");
 	f.serial(FaceShot);
-	nlinfo("4");
 	Background.serial(f);
-	nlinfo("5");
 	if (ver >= 2) {
 		f.serial(useFx);
-		nlinfo("6");
 	} else {
 		useFx = Background.A == 255;
 	}
@@ -147,17 +141,17 @@ void CVisualConfig::serial(NLMISC::IStream & f) throw (NLMISC::EStream) {
 	nldebug(">> serial in");
 	nldebug(">> race: %s", EGSPD::CPeople::toString(Race).c_str());
 	nldebug(">> age: %d", Age);
-	nldebug("VPA: %"NL_I64"u : Chest(%d,%d) Legs(%d,%d) Arms(%d,%d) Hat(%d,%d) RH(%d) LH(%d)", vpa.PropertyA,
+	nldebug("VPA: %" NL_I64 "u : Chest(%d,%d) Legs(%d,%d) Arms(%d,%d) Hat(%d,%d) RH(%d) LH(%d)", vpa.PropertyA,
 	(uint) vpa.PropertySubData.JacketModel, (uint) vpa.PropertySubData.JacketColor,
 	(uint) vpa.PropertySubData.TrouserModel, (uint) vpa.PropertySubData.TrouserColor,
 	(uint) vpa.PropertySubData.ArmModel, (uint) vpa.PropertySubData.ArmColor,
 	(uint) vpa.PropertySubData.HatModel, (uint) vpa.PropertySubData.HatColor,
 	(uint) vpa.PropertySubData.WeaponRightHand,
 	(uint) vpa.PropertySubData.WeaponLeftHand);
-	nldebug("VPB: %"NL_I64"u : Hands(%d,%d) Feet(%d,%d).", vpb.PropertyB,
+	nldebug("VPB: %" NL_I64 "u : Hands(%d,%d) Feet(%d,%d).", vpb.PropertyB,
 	(uint) vpb.PropertySubData.HandsModel, (uint) vpb.PropertySubData.HandsColor,
 	(uint) vpb.PropertySubData.FeetModel, (uint) vpb.PropertySubData.FeetColor);
-	nldebug("VPC: %"NL_I64"u : EyesColor(%d) Tattoo(%d).", vpc.PropertyC,
+	nldebug("VPC: %" NL_I64 "u : EyesColor(%d) Tattoo(%d).", vpc.PropertyC,
 	(uint) vpc.PropertySubData.EyesColor, (uint) vpc.PropertySubData.Tattoo);
 	nldebug("VPC: morph(%d,%d,%d,%d,%d,%d,%d,%d), gabarit(%d,%d,%d,%d,%d)",
 	(uint) vpc.PropertySubData.MorphTarget1,

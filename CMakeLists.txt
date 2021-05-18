@@ -7,6 +7,7 @@ ENDIF(NOT WITH_BMSITE_RRS)
 INCLUDE_DIRECTORIES(
 	${CMAKE_SOURCE_DIR}/ryzom/client/src
 	${CMAKE_SOURCE_DIR}/ryzom/common/src
+	${LIBXML2_INCLUDE_DIR}
 	)
 
 # compile client sheets even when client is not compiled

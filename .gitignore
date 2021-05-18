@@ -1,8 +1,5 @@
-.cproject
-.project
-.settings
 
-bin/data
-bin/*.log
-bin/render_service
+app/data
+app/*.log
+app/render_service
 

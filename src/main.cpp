@@ -46,10 +46,11 @@ CRenderer *Renderer = 0;
 NLNET::TCallbackItem ClientCallbackArray[] = { { "RENDER", cbRender } };
 
 void CRenderService::init() {
+	//NLMISC::DisableNLDebug = false;
 #ifndef NL_DEBUG
-	INelContext::getInstance().getDebugLog()->removeDisplayer("DEFAULT_SD");
-	//INelContext::getInstance().getInfoLog()->removeDisplayer("DEFAULT_SD");
-	INelContext::getInstance().getWarningLog()->removeDisplayer("DEFAULT_SD");
+//	INelContext::getInstance().getDebugLog()->removeDisplayer("DEFAULT_SD");
+//	//INelContext::getInstance().getInfoLog()->removeDisplayer("DEFAULT_SD");
+//	INelContext::getInstance().getWarningLog()->removeDisplayer("DEFAULT_SD");
 #endif // NL_DEBUG
 
 	/**
@@ -86,6 +87,7 @@ void CRenderService::init() {
 	}
 
 	CPath::remapExtension("dds", "tga", true);
+	CPath::remapExtension("dds", "png", true);
 
 	/**
 	 * command line arguments

@@ -3,7 +3,7 @@
 set -e -u
 
 # options to pass render_service, eg --listen=25000
-OPTS=${1:-}
+OPTS=${1:---listen=25000}
 
 # script directory
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
@@ -38,6 +38,11 @@ trap "cleanup" SIGINT SIGTERM
 
 # restart renderer as long as LOCKFILE exists
 while lockfile; do
+	if [ -f ./render_service_new ]; then
+		echo "Copying new file"
+		mv -f ./render_service_new ./render_service
+	fi
+
 	# launch renderer
 	./render_service ${OPTS} &> /dev/null &
 

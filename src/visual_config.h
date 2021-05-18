@@ -42,7 +42,7 @@ public:
 	// not serialized, updated on serial in
 	uint HairColor;
 
-	void serial(NLMISC::IStream & f) throw (NLMISC::EStream);
+	void serial(NLMISC::IStream & f);
 };
 
 #endif	/* _VISUAL_CONFIG_H */
