@@ -8,7 +8,7 @@ BUILD=${DIR}/build
 APPDIR=${DIR}/../app
 
 if [ ! -d ${SOURCE} ]; then
-	git clone --depth 1 --branch feature/develop-atys https://gitlab.com/ryzom/ryzom-core.git ${SOURCE}
+	git clone --depth 1 --branch main/atys-live https://gitlab.com/ryzom/ryzom-core.git ${SOURCE}
 fi
 
 if [ ! -f ${SOURCE}/personal/CMakeLists.txt ]; then
