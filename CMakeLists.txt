@@ -38,11 +38,10 @@ TARGET_LINK_LIBRARIES(render_service
 NL_DEFAULT_PROPS(render_service "Ryzom, Tools: Render Service")
 NL_ADD_RUNTIME_FLAGS(render_service)
 
-IF(WITH_PCH)
-	ADD_NATIVE_PRECOMPILED_HEADER(render_service
-		${CMAKE_CURRENT_SOURCE_DIR}/src/stdpch.h
-		${CMAKE_CURRENT_SOURCE_DIR}/src/stdpch.cpp
-		)
-ENDIF(WITH_PCH)
+IF(WITH_PCH AND (NOT MINGW OR NOT WITH_SYMBOLS))
+	target_precompile_headers(render_service
+		PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/stdpch.h ${CMAKE_CURRENT_SOURCE_DIR}/stdpch.cpp
+	)
+ENDIF()
 
 INSTALL(TARGETS render_service RUNTIME DESTINATION bin COMPONENT tools)
