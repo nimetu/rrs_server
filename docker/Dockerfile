@@ -51,5 +51,6 @@ USER ryzom
 WORKDIR /rrs
 
 ENTRYPOINT ["/vnc_startup.sh"]
-CMD ["--tail-log"]
+CMD ["sleep", "infinity"]
+
 
