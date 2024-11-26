@@ -1,4 +1,4 @@
-FROM debian:buster
+FROM debian:bookworm
 
 MAINTAINER Meelis Mägi "nimetu@gmail.com"
 ENV DEBIAN_FRONTEND noninteractive
@@ -13,9 +13,10 @@ RUN dpkg --add-architecture i386 \
 		p7zip \
 		procps \
 		tigervnc-common \
+		tigervnc-standalone-server \
+		tigervnc-tools \
 		unzip \
 		vim \
-		vnc4server \
 		x11-xserver-utils \
 		xterm \
 	&& apt-get autoremove -y --purge \

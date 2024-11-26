@@ -43,7 +43,9 @@ cmake ${SOURCE} \
 	-DWITH_EXTERNAL=ON \
 	-DEXTERNAL_PATH=/ryzom-external
 
-make -j $(($(nproc) - 1))
+cmake \
+	--build . \
+	--parallel $(($(nproc) - 1))
 
 cp ${BUILD}/bin/render_service $APPDIR
 

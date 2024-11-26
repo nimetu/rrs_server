@@ -3,7 +3,7 @@
 #
 # Multi-stage build requires docker 17.05 or newer
 #
-FROM debian:buster as base
+FROM debian:bookworm as base
 LABEL maintainer="Meelis Mägi <nimetu@gmail.com>"
 
 ENV RYZOM_EXTERNAL=/ryzom-external
@@ -35,7 +35,7 @@ RUN apt-get update -y && apt-get install -y \
 FROM base as lzma
 
 ARG NAME=xz-utils
-ARG VER=5.2.2
+ARG VER=5.6.2
 ARG SRC=${NAME}_${VER}.orig.tar.xz
 ARG SUB=x
 ARG SOURCEDIR=/tmp/${NAME}-${VER}
@@ -53,8 +53,8 @@ RUN mkdir $SOURCEDIR && cd $SOURCEDIR \
 FROM base as libxml2
 
 ARG NAME=libxml2
-ARG VER=2.9.4
-ARG SRC=${NAME}_${VER}+dfsg1.orig.tar.xz
+ARG VER=2.13.3
+ARG SRC=${NAME}_${VER}+dfsg.orig.tar.xz
 ARG SUB=libx
 ARG SOURCEDIR=/tmp/${NAME}-${VER}
 
@@ -90,7 +90,7 @@ RUN cd /tmp \
 FROM base as libcurl
 
 ARG NAME=curl
-ARG VER=7.74.0
+ARG VER=8.11.0
 ARG SRC=${NAME}_${VER}.orig.tar.gz
 ARG SUB=c
 
@@ -117,14 +117,14 @@ RUN cd /tmp \
 FROM base as libpng
 
 ARG NAME=libpng1.6
-ARG VER=1.6.28
-ARG SRC=${NAME}_${VER}.orig.tar.xz
+ARG VER=1.6.44
+ARG SRC=${NAME}_${VER}.orig.tar.gz
 ARG SUB=libp
 ARG SOURCEDIR=/tmp/${NAME}-${VER}
 
 RUN echo "Compiling $NAME-$VER"
 RUN mkdir $SOURCEDIR && cd $SOURCEDIR \
-	&& curl -SL http://ftp.debian.org/debian/pool/main/$SUB/$NAME/$SRC | tar --strip-components=1 -x --xz --directory $SOURCEDIR \
+	&& curl -SL http://ftp.debian.org/debian/pool/main/$SUB/$NAME/$SRC | tar --strip-components=1 -x -z --directory $SOURCEDIR \
 	&& mkdir /tmp/build && cd /tmp/build \
 	&& cmake $SOURCEDIR \
 		-DCMAKE_BUILD_TYPE=Release \
@@ -142,7 +142,7 @@ RUN mkdir $SOURCEDIR && cd $SOURCEDIR \
 FROM base as libjpeg
 
 ARG NAME=libjpeg9
-ARG VER=9d
+ARG VER=9f
 ARG SRC=${NAME}_${VER}.orig.tar.gz
 ARG SUB=libj
 ARG SOURCEDIR=/tmp/${NAME}-${VER}
@@ -161,31 +161,36 @@ RUN mkdir $SOURCEDIR && cd $SOURCEDIR \
 FROM base as giflib
 
 ARG NAME=giflib
-ARG VER=5.1.4
-ARG SRC=${NAME}_${VER}.orig.tar.bz2
+ARG VER=5.2.2
+ARG SRC=${NAME}_${VER}.orig.tar.gz
 ARG SUB=g
 ARG SOURCEDIR=/tmp/${NAME}-${VER}
 
+RUN apt-get install --no-install-recommends -y imagemagick asciidoc
+
 RUN echo "Compiling $NAME-$VER"
 RUN mkdir $SOURCEDIR && cd $SOURCEDIR \
-	&& curl -SL http://ftp.debian.org/debian/pool/main/$SUB/$NAME/$SRC | tar --strip-components=1 -x --bzip2 --directory $SOURCEDIR \
-	&& ./configure --prefix=$RYZOM_EXTERNAL --enable-shared=no --enable-static=yes \
+	&& curl -SL http://ftp.debian.org/debian/pool/main/$SUB/$NAME/$SRC | tar --strip-components=1 -x -z --directory $SOURCEDIR \
 	&& make -j2 \
-	&& make DESTDIR=/tmp/dest install \
-	&& rm -r /tmp/dest/$RYZOM_EXTERNAL/bin
+	&& make DESTDIR=/tmp/dest PREFIX=$RYZOM_EXTERNAL install \
+	&& rm -r /tmp/dest/$RYZOM_EXTERNAL/bin \
+	&& rm -r /tmp/dest/$RYZOM_EXTERNAL/lib/libgif.so.7.2.0 \
+	&& rm -r /tmp/dest/$RYZOM_EXTERNAL/lib/libgif.so.7 \
+	&& rm -r /tmp/dest/$RYZOM_EXTERNAL/lib/libgif.so \
+	&& rm -r /tmp/dest/$RYZOM_EXTERNAL/share
 
 # ===============================
 FROM base as freetype
 
 ARG NAME=freetype
-ARG VER=2.9.1
-ARG SRC=${NAME}_${VER}.orig.tar.gz
+ARG VER=2.13.3
+ARG SRC=${NAME}_${VER}+dfsg.orig.tar.xz
 ARG SUB=f
 ARG SOURCEDIR=/tmp/${NAME}-${VER}
 
 RUN echo "Compiling $NAME-$VER"
 RUN mkdir $SOURCEDIR && cd $SOURCEDIR \
-	&& curl -SL http://ftp.debian.org/debian/pool/main/$SUB/$NAME/$SRC | tar --strip-components=1 -x -z --directory $SOURCEDIR \
+	&& curl -SL http://ftp.debian.org/debian/pool/main/$SUB/$NAME/$SRC | tar --strip-components=1 -x --xz --directory $SOURCEDIR \
 	&& mkdir /tmp/build && cd /tmp/build \
 	&& cmake $SOURCEDIR \
 		-DCMAKE_BUILD_TYPE=Release \
